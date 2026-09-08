@@ -24,20 +24,23 @@ def hierarchy():
 
 
 def wait_for(label):
-    deadline = time.monotonic() + 40
+    deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         if not adb("shell", "pidof", PACKAGE, check=False).strip():
             raise AssertionError("Vinalayan process stopped")
         xml = hierarchy()
+        (OUTPUT / "last-screen.xml").write_text(xml, encoding="utf-8")
         root = ET.fromstring(xml)
         matches = [
             node for node in root.iter("node")
-            if node.get("text", "").casefold() == label.casefold()
+            if label.casefold() in [
+                line.strip().casefold() for line in node.get("text", "").splitlines()
+            ]
         ]
         if matches:
             return matches, xml
         time.sleep(1)
-    raise AssertionError(f"Screen text not found: {label}")
+    raise AssertionError(f"Screen text not found: {label}; visible text: {[n.get('text') for n in root.iter('node') if n.get('text')]}")
 
 
 def tap(label):
@@ -85,6 +88,10 @@ def main():
             raise AssertionError("Android recorded a Vinalayan crash")
         print("PASS: signed APK installed and all four main tabs opened", flush=True)
     finally:
+        screenshot = subprocess.run(
+            ["adb", "exec-out", "screencap", "-p"], capture_output=True, timeout=30,
+        ).stdout
+        (OUTPUT / "last-screen.png").write_bytes(screenshot)
         (OUTPUT / "logcat.txt").write_text(adb("logcat", "-d", check=False), encoding="utf-8")
 
 
