@@ -79,13 +79,13 @@ Run local unit tests:
 ./gradlew :app:testLocalDebugUnitTest
 ```
 
-Release signing uses your own keystore through Gradle properties or CI secrets. Never commit keys, APKs, logs, `local.properties`, `key.properties`, `google-services.json`, keystores, tokens, or other private files.
+The [APK guide](docs/APK.md) explains GitHub Actions builds, installation, signing, and updates. Release signing uses your own keystore through Gradle properties or CI secrets. Never commit keys, APKs, logs, `local.properties`, `key.properties`, `google-services.json`, keystores, tokens, or other private files.
 
 ## Release Variants
 
-- `localRelease` builds APKs for GitHub releases with application id `com.opendash.app`.
-- `playRelease` builds the Google Play app bundle with application id `com.subtlesayak.opendash`.
-- Mapbox routing is the primary route-preview provider when configured for release builds.
+- `localRelease` builds signed APKs for GitHub releases with application id `com.vinalayan.app`.
+- `playRelease` retains the optional Google Play bundle configuration with application id `com.vinalayan.app`; it requires its own service configuration before publication.
+- The preview APK uses local storage and open map/route providers. Firebase sync and Mapbox are optional and require your own configuration.
 
 ## Privacy
 
