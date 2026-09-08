@@ -176,7 +176,7 @@ fun SettingsScreen(
     fun launchGoogleSignIn() {
         accountError = null
         if (BuildConfig.GOOGLE_WEB_CLIENT_ID.isBlank()) {
-            accountError = "Google sign-in is not configured for this build"
+            accountError = "O login com Google não está configurado nesta versão"
             return
         }
         scope.launch {
@@ -193,10 +193,12 @@ fun SettingsScreen(
                     val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
                     authViewModel.signInWithGoogle(googleCredential.idToken)
                 } else {
-                    accountError = "Google sign-in returned an unsupported credential"
+                    accountError = "O Google retornou uma credencial incompatível"
                 }
             } catch (e: GetCredentialException) {
-                accountError = e.message ?: "Google sign-in failed"
+                accountError = e.message ?: "Não foi possível entrar com o Google"
+            } catch (e: Exception) {
+                accountError = e.message ?: "Não foi possível validar a conta Google"
             }
         }
     }
@@ -314,7 +316,7 @@ fun SettingsScreen(
                     OpenDashBtn("Sign out", onClick = { authViewModel.signOut(); onSignedOut() }, variant = BtnVariant.Danger, size = BtnSize.Sm, enabled = !auth.loading, modifier = Modifier.weight(1f))
                 }
             } else if (auth.syncAvailable) {
-                OpenDashBtn(if (auth.loading) "Signing in..." else "Continue with Google", onClick = { launchGoogleSignIn() }, icon = OpenDashIcons.Sync, variant = BtnVariant.Primary, size = BtnSize.Sm, enabled = !auth.loading, modifier = Modifier.fillMaxWidth())
+                OpenDashBtn(if (auth.loading) "Entrando..." else "Continuar com Google", onClick = { launchGoogleSignIn() }, icon = OpenDashIcons.Sync, variant = BtnVariant.Primary, size = BtnSize.Sm, enabled = !auth.loading, modifier = Modifier.fillMaxWidth())
             }
         }
 

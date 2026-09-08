@@ -2,7 +2,7 @@
 
 Aplicativo Android pessoal de Vinícius para sua Himalayan, baseado no [OpenDash](https://github.com/subtlesayak/open-dash). Reúne veículos, manutenção, abastecimentos, despesas e visualização de rotas.
 
-Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A [prévia 0.1.2 para Android](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.2-preview) está disponível para instalação, com o Real Brasileiro como moeda padrão e atualização pelo próprio aplicativo.
+Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A [prévia 0.1.3 para Android](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.3-preview) acrescenta login com Google, mantém o Real Brasileiro como moeda padrão e permite atualização pelo próprio aplicativo.
 
 ## Upstream project notice
 
@@ -37,9 +37,9 @@ Future Vinalayan releases are not intended to include:
 
 ## Install
 
-Baixe **Vinalayan-0.1.2-preview-universal.apk** na [página da prévia](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.2-preview), abra o arquivo no Android e permita a instalação quando solicitado. Nas próximas versões, use **More → Update from GitHub → Check** para baixar e validar a atualização pelo aplicativo. Requer Android 7.0 ou posterior.
+Baixe **Vinalayan-0.1.3-preview-universal.apk** na [página da prévia](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.3-preview), abra o arquivo no Android e permita a instalação quando solicitado. Nas próximas versões, use **More → Update from GitHub → Check** para baixar e validar a atualização pelo aplicativo. Requer Android 7.0 ou posterior.
 
-A prévia passou em 12 testes unitários, Android Lint sem erros, verificações de assinatura e instalação/abertura das quatro abas em emulador Android 15. Ainda precisa ser validada no seu celular. Veja o [guia completo de instalação e atualização](docs/APK.md).
+A prévia passou em 18 testes unitários, Android Lint sem erros, verificações de assinatura e instalação/abertura das quatro abas em emulador Android 15. Ainda precisa ser validada no seu celular. Veja o [guia completo de instalação e atualização](docs/APK.md).
 
 ## First Use
 

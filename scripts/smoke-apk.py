@@ -73,8 +73,8 @@ def main():
         result = adb("shell", "am", "start", "-W", "-n", ACTIVITY)
         if "Status: ok" not in result:
             raise AssertionError(result)
-        capture("01-login", "Vinalayan")
-        tap("Continue")
+        capture("01-login", "Continuar com Google")
+        tap("Continuar sem entrar")
         capture("02-vehicles", "My Vehicles")
         for tab, marker in [
             ("Expenses", "My Expenses"),

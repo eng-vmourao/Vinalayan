@@ -68,9 +68,13 @@ fun LoginScreen(
                 ) {
                     val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
                     authViewModel.signInWithGoogle(googleCredential.idToken)
+                } else {
+                    cmError = "O Google retornou uma credencial incompatível"
                 }
             } catch (e: GetCredentialException) {
-                cmError = e.message ?: "Google sign-in failed"
+                cmError = e.message ?: "Não foi possível entrar com o Google"
+            } catch (e: Exception) {
+                cmError = e.message ?: "Não foi possível validar a conta Google"
             }
         }
     }
@@ -173,7 +177,7 @@ fun LoginScreen(
                             Text("G", color = Color(0xFF4285F4), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                             Spacer(Modifier.width(12.dp))
                             Text(
-                                if (loading) "Signing in…" else "Continue with Google",
+                                if (loading) "Entrando…" else "Continuar com Google",
                                 fontSize = 15.sp, fontWeight = FontWeight.Medium,
                             )
                         }
@@ -194,7 +198,7 @@ fun LoginScreen(
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 ) {
                     Text(
-                        if (authState.syncAvailable) "Continue without signing in" else "Continue",
+                        if (authState.syncAvailable) "Continuar sem entrar" else "Continuar",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center,
@@ -216,8 +220,8 @@ fun LoginScreen(
                     )
                     Spacer(Modifier.width(7.dp))
                     Text(
-                        if (authState.syncAvailable) "Sign in to sync across devices · data stays local otherwise"
-                        else "Local only · add a Firebase project to sync across devices",
+                        if (authState.syncAvailable) "Entre para sincronizar seus dados entre dispositivos"
+                        else "Seus dados permanecem somente neste aparelho",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.5.sp,
                         textAlign = TextAlign.Center,

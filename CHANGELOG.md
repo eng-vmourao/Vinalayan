@@ -1,5 +1,11 @@
 # Changelog
 
+## Vinalayan 0.1.3 Preview
+
+- Added Google sign-in to the welcome screen and account settings.
+- Added Firebase Authentication configuration to signed GitHub APK builds.
+- Added clearer Portuguese account actions and credential errors.
+
 ## Vinalayan 0.1.2 Preview
 
 - Made the repository public so releases can be checked without embedding a GitHub credential.

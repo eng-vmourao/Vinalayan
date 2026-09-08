@@ -1,7 +1,7 @@
 # Google Sign-In And Cloud Sync
 
-OpenDash cloud sync is optional and bring-your-own-Firebase-project. Without Firebase
-configuration, the app stays local-only and the APK remains buildable.
+Vinalayan uses its Firebase project for Google sign-in and optional cloud sync. Without
+Firebase configuration, development builds stay local-only and remain buildable.
 
 ## What Syncs
 
@@ -19,9 +19,9 @@ wallpaper settings only; media backup needs Firebase Storage or another object s
 
 1. Create a Firebase project.
 2. Add an Android app for the exact package you want to test.
-   - `mapboxTestDebug`: `com.opendash.mapboxtest.mui3`
-   - `localDebug`: `com.opendash.app.mui3`
-   - Play release: `com.subtlesayak.opendash`
+   - GitHub release: `com.vinalayan.app`
+   - Local debug: `com.vinalayan.app.mui3`
+   - Mapbox test: `com.vinalayan.mapboxtest`
 3. Add the SHA-1 and SHA-256 fingerprints for the signing key used by that variant.
 4. Download `google-services.json` and place it at:
 

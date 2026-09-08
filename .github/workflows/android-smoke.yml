@@ -44,7 +44,7 @@ jobs:
           arch: x86_64
           profile: pixel_2
           disable-animations: true
-          script: python3 scripts/smoke-apk.py dist/Vinalayan-0.1.2-preview-universal.apk
+          script: python3 scripts/smoke-apk.py dist/Vinalayan-0.1.3-preview-universal.apk
       - name: Upload smoke test evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
