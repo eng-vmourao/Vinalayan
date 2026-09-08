@@ -2,7 +2,7 @@
 
 Aplicativo Android pessoal de Vinícius para sua Himalayan, baseado no [OpenDash](https://github.com/subtlesayak/open-dash). Reúne veículos, manutenção, abastecimentos, despesas e visualização de rotas.
 
-Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A [prévia 0.1.0 para Android](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.0-preview) está disponível para instalação.
+Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A [prévia 0.1.1 para Android](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.1-preview) está disponível para instalação, com o Real Brasileiro como moeda padrão.
 
 ## Upstream project notice
 
@@ -37,7 +37,7 @@ Future Vinalayan releases are not intended to include:
 
 ## Install
 
-Baixe **Vinalayan-0.1.0-preview-universal.apk** na [página da prévia](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.0-preview), abra o arquivo no Android e permita a instalação quando solicitado. Entre na sua conta do GitHub para acessar este repositório privado. Requer Android 7.0 ou posterior.
+Baixe **Vinalayan-0.1.1-preview-universal.apk** na [página da prévia](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.1-preview), abra o arquivo no Android e permita a instalação quando solicitado. Entre na sua conta do GitHub para acessar este repositório privado. Requer Android 7.0 ou posterior.
 
 A prévia passou em 12 testes unitários, Android Lint sem erros, verificações de assinatura e instalação/abertura das quatro abas em emulador Android 15. Ainda precisa ser validada no seu celular. Veja o [guia completo de instalação e atualização](docs/APK.md).
 
