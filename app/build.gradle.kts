@@ -220,7 +220,7 @@ android {
 androidComponents {
     // AGP 9 only enables debug unit tests by default; CI validates the release variant.
     beforeVariants(selector().withBuildType("release")) { variant ->
-        variant.enableUnitTest = true
+        variant.hostTests.getValue(com.android.build.api.variant.HostTestBuilder.UNIT_TEST_TYPE).enable = true
     }
     onVariants { variant ->
         val variantApplicationId = variant.applicationId.get()
