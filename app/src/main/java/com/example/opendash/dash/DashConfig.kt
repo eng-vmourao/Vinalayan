@@ -12,7 +12,7 @@ import com.example.opendash.util.DebugLog
 /**
  * Per-rider dash WiFi configuration, persisted on-device.
  *
- * OpenDash is meant to work on ANY Royal Enfield Tripper dash, not just the author's.
+ * OpenDash is meant to work on any compatible Tripper dash, not just the author's.
  * Every dash advertises a different SSID (e.g. `RE_P0RP_260525`, `RE_XXXX_yymmdd`) but
  * they all share the `RE_` prefix and the factory passphrase `12345678`. So out of the
  * box we connect by PREFIX (see [DashWifiManager]) — the rider just picks their dash from

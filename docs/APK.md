@@ -12,7 +12,7 @@ O Vinalayan usa a distribuição `localRelease` do OpenDash como base: APKs assi
 
 Depois de instalar a versão 0.1.2 ou posterior, use **More → Update from GitHub → Check**. O aplicativo consulta as versões públicas, baixa o APK universal mais recente, valida o arquivo e abre o instalador do Android. Na primeira atualização, autorize o Vinalayan como fonte de instalação. O Android sempre exige sua confirmação final no botão **Instalar**.
 
-Requer Android 7.0 ou posterior. O pacote `com.vinalayan.app` permite instalar Vinalayan junto com OpenDash. Os dados dos dois aplicativos são separados. Esta é uma prévia; a validação no seu celular ainda é necessária.
+O aplicativo requer Android 7.0 ou posterior; a conexão direta com a Tripper requer Android 10 ou posterior por causa da seleção segura de rede Wi-Fi do sistema. O pacote `com.vinalayan.app` permite instalar Vinalayan junto com OpenDash. Os dados dos dois aplicativos são separados. Esta é uma prévia; a validação no seu celular ainda é necessária.
 
 ## Geração pelo GitHub
 

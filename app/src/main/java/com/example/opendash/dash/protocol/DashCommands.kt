@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 
 /**
  * K1G commands ported byte-for-byte from better-dash (tripper_app_like_nav.py),
- * which was reconstructed from the official RE app + packet captures.
+ * which was reconstructed from reference app behavior + packet captures.
  */
 object DashCommands {
 
@@ -255,7 +255,7 @@ object DashCommands {
         return ("%04X".format(outerLen) + innerHex).hexToBytes()
     }
 
-    // Captured from the official RE app. These are additive media/call cards and do not
+    // Captured from reference app behavior. These are additive media/call cards and do not
     // alter auth, projection, route-card, ACK, or RTP packet behavior.
     private const val MEDIA_FIELD_MAX = 20
 
