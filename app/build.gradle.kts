@@ -95,7 +95,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = providers.gradleProperty("VINALAYAN_VERSION_CODE").orNull?.toInt() ?: 1
-        versionName = "0.1.1-preview"
+        versionName = "0.1.2-preview"
 
         buildConfigField(
             "String",
@@ -260,6 +260,7 @@ dependencies {
     implementation(libs.maplibre)
     implementation(libs.maplibre.annotation)
     testImplementation(libs.junit)
+    testImplementation("org.json:json:20250517")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)

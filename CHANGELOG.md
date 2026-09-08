@@ -1,5 +1,12 @@
 # Changelog
 
+## Vinalayan 0.1.2 Preview
+
+- Made the repository public so releases can be checked without embedding a GitHub credential.
+- Replaced the placeholder update button with an in-app release check and verified APK download.
+- Added package, version, size, and SHA-256 checks before opening Android's installer.
+- Added the Android unknown-source permission flow required for self-updates.
+
 ## Vinalayan 0.1.1 Preview
 
 - Added Brazilian real (`BRL`, `R$`) to the currency list and made it the default for new selections/installations.

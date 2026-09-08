@@ -39,6 +39,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import com.example.opendash.BuildConfig
+import com.example.opendash.data.AppUpdater
 import com.example.opendash.data.CurrencySettings
 import com.example.opendash.data.MapboxNavigationSettings
 import com.example.opendash.data.OpenDashCurrency
@@ -50,6 +51,7 @@ import com.example.opendash.viewmodel.ConnectionState
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.launch
+import java.io.File
 
 private enum class MorePage(val title: String) {
     ROOT("More"),
@@ -107,6 +109,8 @@ fun SettingsScreen(
     var currencyMenuExpanded by remember { mutableStateOf(false) }
     var accountError by remember { mutableStateOf<String?>(null) }
     var updateMessage by remember { mutableStateOf<String?>(null) }
+    var updateInProgress by remember { mutableStateOf(false) }
+    var pendingUpdateApk by remember { mutableStateOf<File?>(null) }
     var page by remember { mutableStateOf(MorePage.ROOT) }
     var units by remember { mutableStateOf("Kilometres") }
     var wallpaperStatus by remember { mutableStateOf<String?>(null) }
@@ -122,6 +126,50 @@ fun SettingsScreen(
             "Saved ${asset.title}"
         } else {
             "Could not save ${asset.title}"
+        }
+    }
+
+    val installPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+    ) {
+        val apk = pendingUpdateApk
+        if (apk != null && AppUpdater.canRequestInstall(ctx)) {
+            ctx.startActivity(AppUpdater.installerIntent(ctx, apk))
+            updateMessage = "Atualização pronta. Confirme a instalação no Android."
+        } else {
+            updateMessage = "Autorize o Vinalayan a instalar apps e toque em Check novamente."
+        }
+    }
+
+    fun checkForUpdate() {
+        if (updateInProgress) return
+        updateInProgress = true
+        updateMessage = "Procurando atualização…"
+        scope.launch {
+            runCatching {
+                val release = AppUpdater.findUpdate(BuildConfig.VERSION_NAME)
+                    ?: return@runCatching null
+                updateMessage = "Baixando Vinalayan ${release.versionName}…"
+                release to AppUpdater.download(ctx, release)
+            }.onSuccess { result ->
+                if (result == null) {
+                    updateMessage = "Vinalayan ${BuildConfig.VERSION_NAME} já está atualizado."
+                    return@onSuccess
+                }
+                val (release, apk) = result
+                pendingUpdateApk = apk
+                if (AppUpdater.canRequestInstall(ctx)) {
+                    ctx.startActivity(AppUpdater.installerIntent(ctx, apk))
+                    updateMessage = "Vinalayan ${release.versionName} pronto. Confirme a instalação no Android."
+                } else {
+                    updateMessage = "Autorize a instalação para concluir a atualização."
+                    installPermissionLauncher.launch(AppUpdater.installPermissionIntent(ctx))
+                }
+            }.onFailure { error ->
+                updateMessage = error.message?.let { "Não foi possível atualizar: $it" }
+                    ?: "Não foi possível verificar atualizações."
+            }
+            updateInProgress = false
         }
     }
 
@@ -209,10 +257,11 @@ fun SettingsScreen(
                     last = true,
                     control = {
                         OpenDashBtn(
-                            "Check",
-                            onClick = { updateMessage = "Vinalayan ${BuildConfig.VERSION_NAME} is installed. Check GitHub Releases for newer builds." },
+                            if (updateInProgress) "Aguarde…" else "Check",
+                            onClick = { checkForUpdate() },
                             variant = BtnVariant.Secondary,
                             size = BtnSize.Sm,
+                            enabled = !updateInProgress,
                         )
                     },
                 )
