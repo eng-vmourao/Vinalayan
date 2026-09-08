@@ -6,7 +6,7 @@ O Vinalayan usa a distribuição `localRelease` do OpenDash como base: APKs assi
 
 1. Entre no GitHub com a conta que tem acesso ao repositório privado.
 2. Abra [Releases](https://github.com/eng-vmourao/Vinalayan/releases).
-3. Baixe `Vinalayan-0.1.0-preview-universal.apk`. Se souber que seu celular é ARM64, a variante `arm64-v8a` ocupa menos espaço.
+3. Baixe `Vinalayan-0.1.1-preview-universal.apk`. Se souber que seu celular é ARM64, a variante `arm64-v8a` ocupa menos espaço.
 4. Abra o arquivo no Android, permita a instalação por esse navegador/gerenciador quando solicitado e toque em **Instalar**.
 5. Abra **Vinalayan** e toque em **Continue** para usar os dados locais.
 

@@ -10,6 +10,7 @@ enum class OpenDashCurrency(
     val symbol: String,
     val displayName: String,
 ) {
+    BRL("BRL", "R$", "Real brasileiro"),
     INR("INR", "\u20b9", "Indian rupee"),
     USD("USD", "$", "US dollar"),
     EUR("EUR", "\u20ac", "Euro"),
@@ -24,13 +25,15 @@ object CurrencySettings {
     private const val PREFS = "appearance"
     private const val KEY_CURRENCY = "currency_code"
 
-    private val _currency = MutableStateFlow(OpenDashCurrency.INR)
+    val defaultCurrency = OpenDashCurrency.BRL
+
+    private val _currency = MutableStateFlow(defaultCurrency)
     val currency = _currency.asStateFlow()
 
     fun init(context: Context) {
         val saved = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .getString(KEY_CURRENCY, OpenDashCurrency.INR.code)
-        _currency.value = OpenDashCurrency.entries.firstOrNull { it.code == saved } ?: OpenDashCurrency.INR
+            .getString(KEY_CURRENCY, defaultCurrency.code)
+        _currency.value = OpenDashCurrency.entries.firstOrNull { it.code == saved } ?: defaultCurrency
     }
 
     fun select(context: Context, currency: OpenDashCurrency) {
@@ -43,6 +46,7 @@ object CurrencySettings {
 }
 
 fun formatCurrencyAmount(amount: Double, currency: OpenDashCurrency, decimals: Int = 0): String {
-    val formatted = "%,.${decimals}f".format(Locale.US, amount)
+    val locale = if (currency == OpenDashCurrency.BRL) Locale.Builder().setLanguage("pt").setRegion("BR").build() else Locale.US
+    val formatted = "%,.${decimals}f".format(locale, amount)
     return if (currency.symbol.length > 1) "${currency.symbol} $formatted" else "${currency.symbol}$formatted"
 }

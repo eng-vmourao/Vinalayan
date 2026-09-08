@@ -1,5 +1,11 @@
 # Changelog
 
+## Vinalayan 0.1.1 Preview
+
+- Added Brazilian real (`BRL`, `R$`) to the currency list and made it the default for new selections/installations.
+- Added Brazilian thousands and decimal separators when displaying values in reais.
+- Kept previously selected currencies unchanged after updating the app.
+
 ## 1.3.1
 
 - Added a currency selector in Settings for expense display and exports.

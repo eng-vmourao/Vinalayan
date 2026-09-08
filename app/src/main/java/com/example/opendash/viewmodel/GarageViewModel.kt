@@ -187,7 +187,7 @@ class GarageViewModel(app: Application) : AndroidViewModel(app) {
     suspend fun exportExpensesCsv(
         expenses: List<Expense>? = null,
         periodLabel: String = "all-time",
-        currency: OpenDashCurrency = OpenDashCurrency.INR,
+        currency: OpenDashCurrency = OpenDashCurrency.BRL,
     ): File = withContext(Dispatchers.IO) {
         val selected = expenses ?: repo.expenses()
         val file = exportFile("vinalayan-expenses-$periodLabel.csv")
@@ -215,7 +215,7 @@ class GarageViewModel(app: Application) : AndroidViewModel(app) {
     suspend fun exportExpensesDoc(
         expenses: List<Expense>? = null,
         periodLabel: String = "All time",
-        currency: OpenDashCurrency = OpenDashCurrency.INR,
+        currency: OpenDashCurrency = OpenDashCurrency.BRL,
     ): File = withContext(Dispatchers.IO) {
         val selected = expenses ?: repo.expenses()
         val file = exportFile("vinalayan-expenses-${periodLabel.lowercase(Locale.US).replace(' ', '-')}.doc")
@@ -381,5 +381,5 @@ class GarageViewModel(app: Application) : AndroidViewModel(app) {
         return allowed.firstOrNull { it.equals(raw.trim(), ignoreCase = true) } ?: "Others"
     }
 
-    private val currencySymbolsRegex = Regex("[₹€£\$]|\\b(INR|USD|EUR|GBP|AUD|CAD|SGD|AED)\\b", RegexOption.IGNORE_CASE)
+    private val currencySymbolsRegex = Regex("R\\$|[₹€£\$]|\\b(BRL|INR|USD|EUR|GBP|AUD|CAD|SGD|AED)\\b", RegexOption.IGNORE_CASE)
 }
