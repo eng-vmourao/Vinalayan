@@ -13,9 +13,9 @@ plugins {
     alias(libs.plugins.firebase.crashlytics) apply false
 }
 
-val localApplicationId = "com.opendash.app"
-val playApplicationId = "com.subtlesayak.opendash"
-val mapboxTestApplicationId = "com.opendash.mapboxtest"
+val localApplicationId = "com.vinalayan.app"
+val playApplicationId = "com.vinalayan.app"
+val mapboxTestApplicationId = "com.vinalayan.mapboxtest"
 val debugApplicationIdSuffix = ".mui3"
 val googleServicesFile = project.file("google-services.json")
 val firebaseClientPackages = if (googleServicesFile.exists()) {
@@ -94,8 +94,8 @@ android {
         applicationId = localApplicationId
         minSdk = 24
         targetSdk = 36
-        versionCode = 21
-        versionName = "1.3.5"
+        versionCode = providers.gradleProperty("VINALAYAN_VERSION_CODE").orNull?.toInt() ?: 1
+        versionName = "0.1.0-preview"
 
         buildConfigField(
             "String",

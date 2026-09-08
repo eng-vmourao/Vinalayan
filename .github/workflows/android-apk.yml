@@ -1,0 +1,90 @@
+name: Build Vinalayan APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - '*.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew*'
+      - '.github/workflows/android-apk.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      ORG_GRADLE_PROJECT_VINALAYAN_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+      - name: Install Android SDK packages
+        run: sdkmanager 'platforms;android-36.1' 'build-tools;36.0.0' 'platform-tools'
+      - name: Restore release signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.VINALAYAN_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.VINALAYAN_KEYSTORE_PASSWORD }}
+        run: |
+          test -n "$KEYSTORE_BASE64"
+          test -n "$KEYSTORE_PASSWORD"
+          umask 077
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/vinalayan.p12"
+          keytool -list -keystore "$RUNNER_TEMP/vinalayan.p12" -storetype PKCS12 -storepass:env KEYSTORE_PASSWORD -alias vinalayan
+      - name: Test and build signed release APKs
+        env:
+          ORG_GRADLE_PROJECT_OPENDASH_RELEASE_STORE_FILE: ${{ runner.temp }}/vinalayan.p12
+          ORG_GRADLE_PROJECT_OPENDASH_RELEASE_STORE_PASSWORD: ${{ secrets.VINALAYAN_KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_OPENDASH_RELEASE_KEY_ALIAS: vinalayan
+          ORG_GRADLE_PROJECT_OPENDASH_RELEASE_KEY_PASSWORD: ${{ secrets.VINALAYAN_KEYSTORE_PASSWORD }}
+        run: bash ./gradlew :app:testLocalReleaseUnitTest :app:lintLocalRelease :app:assembleLocalRelease --no-daemon --stacktrace
+      - name: Verify and collect installable APKs
+        run: |
+          mkdir -p dist
+          for abi in universal arm64-v8a armeabi-v7a x86 x86_64; do
+            apk="app/build/outputs/apk/local/release/app-local-$abi-release.apk"
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$apk"
+            "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 4 "$apk"
+            "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" | grep "package: name='com.vinalayan.app'"
+            "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$apk" | grep "application-label:'Vinalayan'"
+            cp "$apk" "dist/Vinalayan-0.1.0-preview-$abi.apk"
+          done
+          cd dist
+          sha256sum *.apk > SHA256SUMS.txt
+      - name: Upload APKs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Vinalayan-APK
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Vinalayan-validation
+          path: |
+            app/build/reports/
+            app/build/test-results/
+            app/build/outputs/mapping/localRelease/
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Remove temporary signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/vinalayan.p12"

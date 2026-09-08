@@ -30,6 +30,8 @@ app/google-services.json
 *.aab
 *.jks
 *.keystore
+*.p12
+*.pfx
 *.log
 firebase-debug.log
 crashlytics-build.properties
