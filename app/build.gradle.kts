@@ -218,6 +218,10 @@ android {
 }
 
 androidComponents {
+    // AGP 9 only enables debug unit tests by default; CI validates the release variant.
+    beforeVariants(selector().withBuildType("release")) { variant ->
+        variant.enableUnitTest = true
+    }
     onVariants { variant ->
         val variantApplicationId = variant.applicationId.get()
         if (hasFirebaseConfig && variantApplicationId !in firebaseClientPackages) {
