@@ -173,7 +173,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix = ".mui3"
-            resValue("string", "app_name", "OpenDash")
+            resValue("string", "app_name", "Vinalayan")
         }
         release {
             isMinifyEnabled = true

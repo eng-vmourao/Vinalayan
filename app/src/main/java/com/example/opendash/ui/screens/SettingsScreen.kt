@@ -69,18 +69,18 @@ private data class WallpaperAsset(
 )
 
 private val downloadableWallpapers = listOf(
-    WallpaperAsset("Wallpaper 01", "wallpapers/opendash_wallpaper_01.png", "OpenDash-Wallpaper-01.png"),
-    WallpaperAsset("Wallpaper 02", "wallpapers/opendash_wallpaper_02.png", "OpenDash-Wallpaper-02.png"),
-    WallpaperAsset("Wallpaper 03", "wallpapers/opendash_wallpaper_03.png", "OpenDash-Wallpaper-03.png"),
-    WallpaperAsset("Wallpaper 04", "wallpapers/opendash_wallpaper_04.png", "OpenDash-Wallpaper-04.png"),
-    WallpaperAsset("Wallpaper 05", "wallpapers/opendash_wallpaper_05.png", "OpenDash-Wallpaper-05.png"),
-    WallpaperAsset("Wallpaper 06", "wallpapers/opendash_wallpaper_06.png", "OpenDash-Wallpaper-06.png"),
-    WallpaperAsset("Wallpaper 07", "wallpapers/opendash_wallpaper_07.png", "OpenDash-Wallpaper-07.png"),
-    WallpaperAsset("Wallpaper 08", "wallpapers/opendash_wallpaper_08.png", "OpenDash-Wallpaper-08.png"),
-    WallpaperAsset("Wallpaper 09", "wallpapers/opendash_wallpaper_09.png", "OpenDash-Wallpaper-09.png"),
-    WallpaperAsset("Wallpaper 10", "wallpapers/opendash_wallpaper_10.png", "OpenDash-Wallpaper-10.png"),
-    WallpaperAsset("Wallpaper 11", "wallpapers/opendash_wallpaper_11.png", "OpenDash-Wallpaper-11.png"),
-    WallpaperAsset("Wallpaper 12", "wallpapers/opendash_wallpaper_12.png", "OpenDash-Wallpaper-12.png"),
+    WallpaperAsset("Wallpaper 01", "wallpapers/opendash_wallpaper_01.png", "Vinalayan-Wallpaper-01.png"),
+    WallpaperAsset("Wallpaper 02", "wallpapers/opendash_wallpaper_02.png", "Vinalayan-Wallpaper-02.png"),
+    WallpaperAsset("Wallpaper 03", "wallpapers/opendash_wallpaper_03.png", "Vinalayan-Wallpaper-03.png"),
+    WallpaperAsset("Wallpaper 04", "wallpapers/opendash_wallpaper_04.png", "Vinalayan-Wallpaper-04.png"),
+    WallpaperAsset("Wallpaper 05", "wallpapers/opendash_wallpaper_05.png", "Vinalayan-Wallpaper-05.png"),
+    WallpaperAsset("Wallpaper 06", "wallpapers/opendash_wallpaper_06.png", "Vinalayan-Wallpaper-06.png"),
+    WallpaperAsset("Wallpaper 07", "wallpapers/opendash_wallpaper_07.png", "Vinalayan-Wallpaper-07.png"),
+    WallpaperAsset("Wallpaper 08", "wallpapers/opendash_wallpaper_08.png", "Vinalayan-Wallpaper-08.png"),
+    WallpaperAsset("Wallpaper 09", "wallpapers/opendash_wallpaper_09.png", "Vinalayan-Wallpaper-09.png"),
+    WallpaperAsset("Wallpaper 10", "wallpapers/opendash_wallpaper_10.png", "Vinalayan-Wallpaper-10.png"),
+    WallpaperAsset("Wallpaper 11", "wallpapers/opendash_wallpaper_11.png", "Vinalayan-Wallpaper-11.png"),
+    WallpaperAsset("Wallpaper 12", "wallpapers/opendash_wallpaper_12.png", "Vinalayan-Wallpaper-12.png"),
 )
 
 @Composable
@@ -205,12 +205,12 @@ fun SettingsScreen(
                 MoreRow(
                     OpenDashIcons.Sync,
                     "Update from GitHub",
-                    updateMessage ?: "Check the latest OpenDash release",
+                    updateMessage ?: "Check the latest Vinalayan release",
                     last = true,
                     control = {
                         OpenDashBtn(
                             "Check",
-                            onClick = { updateMessage = "OpenDash ${BuildConfig.VERSION_NAME} is installed. Check GitHub Releases for newer builds." },
+                            onClick = { updateMessage = "Vinalayan ${BuildConfig.VERSION_NAME} is installed. Check GitHub Releases for newer builds." },
                             variant = BtnVariant.Secondary,
                             size = BtnSize.Sm,
                         )
@@ -228,7 +228,7 @@ fun SettingsScreen(
                     MoreRow(OpenDashIcons.Navi, "Mapbox debug", "Inspect the primary navigation provider", onClick = { onOpenMapboxDebug.invoke() })
                 }
                 SettingsDivider(Modifier.padding(horizontal = 6.dp))
-                MoreRow(OpenDashIcons.Dash, "About", "OpenDash v${BuildConfig.VERSION_NAME}", onClick = { page = MorePage.ABOUT })
+                MoreRow(OpenDashIcons.Dash, "About", "Vinalayan v${BuildConfig.VERSION_NAME}", onClick = { page = MorePage.ABOUT })
                 SettingsDivider(Modifier.padding(horizontal = 6.dp))
                 MoreRow(OpenDashIcons.Bell, "Help", "Navigation, vehicles, garage, and expenses", onClick = { page = MorePage.HELP })
                 SettingsDivider(Modifier.padding(horizontal = 6.dp))
@@ -368,7 +368,7 @@ fun SettingsScreen(
         }
 
         Text(
-            "OpenDash v${BuildConfig.VERSION_NAME} · ${if (!auth.syncAvailable) "local only" else if (auth.isSignedIn) "sync on" else "sync off"}",
+            "Vinalayan v${BuildConfig.VERSION_NAME} · ${if (!auth.syncAvailable) "local only" else if (auth.isSignedIn) "sync on" else "sync off"}",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 11.sp,
             fontFamily = GeistMonoFamily,
@@ -579,8 +579,8 @@ private fun ThemePreviewCard(
 private fun MoreInformationPage(page: MorePage, onBack: () -> Unit) {
     val sections = when (page) {
         MorePage.ABOUT -> listOf(
-            "OpenDash v${BuildConfig.VERSION_NAME}" to "Open-source route preview, ride management, vehicle, garage, maintenance, expense, and wallpaper download tools.",
-            "Privacy" to "OpenDash works locally by default. Your ride, vehicle, and expense data stays on this device unless sync is enabled.",
+            "Vinalayan v${BuildConfig.VERSION_NAME}" to "Open-source route preview, ride management, vehicle, garage, maintenance, expense, and wallpaper download tools.",
+            "Privacy" to "Vinalayan works locally by default. Your ride, vehicle, and expense data stays on this device unless sync is enabled.",
         )
         MorePage.HELP -> listOf(
             "Navigation" to "Share a destination or geo link, then review the route before you ride.",
@@ -590,14 +590,15 @@ private fun MoreInformationPage(page: MorePage, onBack: () -> Unit) {
             "Expenses" to "Track ride and ownership costs with monthly and all-time views.",
         )
         MorePage.TERMS -> listOf(
-            "Independent project" to "OpenDash is independent and community-built.",
+            "Independent project" to "Vinalayan is independent and community-built.",
             "Ride responsibly" to "Configure the app before riding. Do not interact with the phone in motion, and always follow local laws and road conditions.",
             "No warranty" to "The software is provided without warranty. Compatibility can vary by Android device and connected applications.",
         )
         MorePage.LICENSE -> listOf(
-            "OpenDash" to "Distributed under the license included with the source repository.",
-            "Open-source components" to "OpenDash uses Kotlin, Jetpack Compose, MapLibre, OpenFreeMap, OSRM, AndroidX, and other libraries under their respective licenses.",
-            "Source" to "github.com/subtlesayak/open-dash",
+            "Vinalayan" to "Based on OpenDash. Distributed under the license included with the source repository.",
+            "Open-source components" to "Vinalayan uses Kotlin, Jetpack Compose, MapLibre, OpenFreeMap, OSRM, AndroidX, and other libraries under their respective licenses.",
+            "Source" to "github.com/eng-vmourao/Vinalayan",
+            "Original project" to "github.com/subtlesayak/open-dash",
         )
         MorePage.CHANGELOG -> listOf(
             "1.3.5 cleanup" to listOf(

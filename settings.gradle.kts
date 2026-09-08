@@ -45,5 +45,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OpenDash"
+rootProject.name = "Vinalayan"
 include(":app")

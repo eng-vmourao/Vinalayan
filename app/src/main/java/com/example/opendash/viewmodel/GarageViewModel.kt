@@ -190,7 +190,7 @@ class GarageViewModel(app: Application) : AndroidViewModel(app) {
         currency: OpenDashCurrency = OpenDashCurrency.INR,
     ): File = withContext(Dispatchers.IO) {
         val selected = expenses ?: repo.expenses()
-        val file = exportFile("opendash-expenses-$periodLabel.csv")
+        val file = exportFile("vinalayan-expenses-$periodLabel.csv")
         file.writeText(buildString {
             appendLine("Date,Odometer_km,Distance_Covered_km,Fuel_L,Cost_${currency.code},Fuel_Price_per_L_${currency.code},Category,Note")
             selected.forEach { e ->
@@ -218,11 +218,11 @@ class GarageViewModel(app: Application) : AndroidViewModel(app) {
         currency: OpenDashCurrency = OpenDashCurrency.INR,
     ): File = withContext(Dispatchers.IO) {
         val selected = expenses ?: repo.expenses()
-        val file = exportFile("opendash-expenses-${periodLabel.lowercase(Locale.US).replace(' ', '-')}.doc")
+        val file = exportFile("vinalayan-expenses-${periodLabel.lowercase(Locale.US).replace(' ', '-')}.doc")
         file.writeText(
             buildString {
-                appendLine("<html><head><meta charset=\"utf-8\"><title>OpenDash Expenses</title></head><body>")
-                appendLine("<h1>OpenDash Expenses - ${html(periodLabel)}</h1>")
+                appendLine("<html><head><meta charset=\"utf-8\"><title>Vinalayan Expenses</title></head><body>")
+                appendLine("<h1>Vinalayan Expenses - ${html(periodLabel)}</h1>")
                 appendLine("<p>Total: ${html(formatCurrencyAmount(selected.sumOf { it.amount }, currency, 2))}</p>")
                 appendLine("<table border=\"1\" cellspacing=\"0\" cellpadding=\"6\">")
                 appendLine("<tr><th>Date</th><th>Category</th><th>Amount</th><th>Note</th></tr>")

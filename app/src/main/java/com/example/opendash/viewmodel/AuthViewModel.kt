@@ -94,7 +94,7 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
 
     fun syncNow() {
         if (!firebaseConfigured || auth?.currentUser == null) {
-            _state.update { it.copy(error = "Sign in to sync OpenDash data") }
+            _state.update { it.copy(error = "Sign in to sync Vinalayan data") }
             return
         }
         viewModelScope.launch(Dispatchers.IO) {

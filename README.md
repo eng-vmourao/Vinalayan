@@ -1,9 +1,17 @@
+# Vinalayan
+
+Aplicativo Android pessoal de Vinícius para sua Himalayan, baseado no [OpenDash](https://github.com/subtlesayak/open-dash). Reúne veículos, manutenção, abastecimentos, despesas e visualização de rotas.
+
+Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. Ainda não há APK publicado neste repositório; consulte as instruções de compilação abaixo.
+
+## Upstream project notice
+
 > [!WARNING]
 > Royal Enfield contacted the OpenDash project, and after discussions the project is removing dash connection/projection protocols, proprietary code, and dash wallpaper functionality from future releases. OpenDash is being refocused as a clean, independent app around route preview, vehicle management, maintenance, garage, expenses, and downloadable wallpapers. Existing dash-related builds may continue to work only while the dash still allows them, but dash connection issues will not be fixed going forward.
 
-# OpenDash
+## Overview
 
-OpenDash is an open-source Android app for motorcycle ownership, trip prep, and ride-adjacent tools. The project is moving forward without dash connection, projection, reverse-engineered protocol, or proprietary integration code.
+Vinalayan is an open-source Android app for motorcycle ownership, trip prep, and ride-adjacent tools, based on OpenDash. The project is moving forward without dash connection, projection, reverse-engineered protocol, or proprietary integration code.
 
 The new direction is simple: keep the useful rider tools, make the app clean and independent, and rebuild only around original app-only features.
 
@@ -19,7 +27,7 @@ The new direction is simple: keep the useful rider tools, make the app clean and
 
 ## Removed Direction
 
-Future OpenDash releases are not intended to include:
+Future Vinalayan releases are not intended to include:
 
 - Dash pairing or connection flows.
 - Dash projection, video streaming, media/call cards, or hardware control.
@@ -29,18 +37,15 @@ Future OpenDash releases are not intended to include:
 
 ## Install
 
-1. Open the [OpenDash Releases page](https://github.com/subtlesayak/open-dash/releases).
-2. Download the latest APK for your device. The universal APK works on most phones; ABI-specific APKs are smaller if you know your device architecture.
-3. Allow installation from your browser or file manager.
-4. Install or update OpenDash.
+Vinalayan does not yet have a published APK. Build it from source using the instructions below. Future APKs will be available on the [Vinalayan Releases page](https://github.com/eng-vmourao/Vinalayan/releases).
 
 ## First Use
 
-1. Open OpenDash.
+1. Open Vinalayan.
 2. Add your motorcycle in **Vehicles**.
 3. Add odometer, PUC, insurance, and service details.
 4. Log fuel, maintenance, and ownership costs in **Garage** and **Expenses**.
-5. Share a destination or `geo:` link into OpenDash to preview a route.
+5. Share a destination or `geo:` link into Vinalayan to preview a route.
 6. Use **More** for account, sync, appearance, map provider, and wallpaper downloads.
 
 ## Main Tabs
@@ -57,8 +62,8 @@ Route preview opens from shared destinations and saved locations instead of bein
 ## Build From Source
 
 ```bash
-git clone https://github.com/subtlesayak/open-dash.git
-cd open-dash
+git clone https://github.com/eng-vmourao/Vinalayan.git
+cd Vinalayan
 ./gradlew :app:assembleLocalDebug
 ```
 
@@ -98,7 +103,7 @@ Please remove personal data from logs and screenshots before sharing: coordinate
 
 ## License
 
-OpenDash is distributed under the terms in [`LICENSE`](LICENSE).
+Vinalayan is based on OpenDash and distributed under the terms in [`LICENSE`](LICENSE). Original attribution is preserved in [`NOTICE`](NOTICE).
 
 ## References
 

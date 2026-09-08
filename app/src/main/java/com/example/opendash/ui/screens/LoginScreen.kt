@@ -110,7 +110,7 @@ fun LoginScreen(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "OpenDash",
+                        "Vinalayan",
                         color = MaterialTheme.colorScheme.onBackground,
                         fontFamily = GeistMonoFamily,
                         fontWeight = FontWeight.Bold,
