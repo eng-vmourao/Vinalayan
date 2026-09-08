@@ -38,6 +38,8 @@ crashlytics-build.properties
 *.hprof
 *.dmp
 *.stacktrace
+__pycache__/
+*.py[cod]
 crash_exports/
 crash-exports/
 crashlytics/

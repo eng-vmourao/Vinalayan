@@ -1,5 +1,13 @@
 # Changelog
 
+## Vinalayan 0.1.4 Preview
+
+- Restored the Home tab with live Tripper Dash connection status.
+- Restored Wi-Fi discovery, pairing, dash authentication, keep-alive service, and projection controls.
+- Added a dedicated **Connect to dash** screen with Android permission and pairing flows.
+- Added **Send to Tripper Dash** to route previews.
+- Restored ride recording, dash media/call cards, and wallpaper projection support.
+
 ## Vinalayan 0.1.3 Preview
 
 - Added Google sign-in to the welcome screen and account settings.

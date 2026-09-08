@@ -29,7 +29,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [3/4] Checking Home/Route Connect permission scope...
+echo [3/4] Checking Tripper connection permissions...
 where rg >nul 2>nul
 if errorlevel 1 (
     echo ERROR: ripgrep ^(rg^) is required for the static permission smoke checks.
@@ -37,33 +37,35 @@ if errorlevel 1 (
     exit /b 1
 )
 
-set "SCREEN_FILES=app\src\main\java\com\example\opendash\ui\screens\HomeScreen.kt app\src\main\java\com\example\opendash\ui\screens\RouteScreen.kt"
-
-for %%P in (POST_NOTIFICATIONS ANSWER_PHONE_CALLS CALL_PHONE READ_PHONE_STATE READ_CALL_LOG) do (
-    rg -n "%%P" %SCREEN_FILES% >nul
-    set "RG_EXIT=!ERRORLEVEL!"
-    if "!RG_EXIT!"=="0" (
-        echo ERROR: optional permission %%P appears in a Home/Route Connect flow file.
-        rg -n "%%P" %SCREEN_FILES%
+for %%P in (ACCESS_WIFI_STATE CHANGE_NETWORK_STATE NEARBY_WIFI_DEVICES FOREGROUND_SERVICE_CONNECTED_DEVICE FOREGROUND_SERVICE_LOCATION) do (
+    rg -n "%%P" app\src\main\AndroidManifest.xml >nul
+    if errorlevel 1 (
+        echo ERROR: required Tripper permission %%P is missing from AndroidManifest.xml.
         exit /b 1
-    )
-    if not "!RG_EXIT!"=="1" (
-        echo ERROR: rg failed while checking %%P.
-        exit /b !RG_EXIT!
     )
 )
 
-echo OK: Home/Route Connect flow files do not reference optional phone, call-log, or notification permissions.
+echo OK: Tripper connection permissions are declared.
 
 echo.
-echo [4/4] Checking Route phone permission copy...
-rg -n "More > Media & calls" app\src\main\java\com\example\opendash\ui\screens\RouteScreen.kt >nul
+echo [4/4] Checking connection navigation...
+rg -n "NavTab\(Screen.Home" app\src\main\java\com\example\opendash\ui\navigation\AppNavigation.kt >nul
 if errorlevel 1 (
-    echo ERROR: Route phone permission copy no longer points to More ^> Media ^& calls.
+    echo ERROR: Home tab is missing.
+    exit /b 1
+)
+rg -n "composable\(Screen.Dash.route\)" app\src\main\java\com\example\opendash\ui\navigation\AppNavigation.kt >nul
+if errorlevel 1 (
+    echo ERROR: Dash connection route is missing.
+    exit /b 1
+)
+rg -n "Send to Tripper Dash" app\src\main\java\com\example\opendash\ui\screens\RouteScreen.kt >nul
+if errorlevel 1 (
+    echo ERROR: Route-to-dash action is missing.
     exit /b 1
 )
 
-echo OK: Route phone permission copy points to More ^> Media ^& calls.
+echo OK: Home, dash connection, and route projection flows are reachable.
 echo.
 echo == Open Dash local smoke checks passed ==
 exit /b 0

@@ -2,18 +2,16 @@
 
 Aplicativo Android pessoal de Vinícius para sua Himalayan, baseado no [OpenDash](https://github.com/subtlesayak/open-dash). Reúne veículos, manutenção, abastecimentos, despesas e visualização de rotas.
 
-Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A [prévia 0.1.3 para Android](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.3-preview) acrescenta login com Google, mantém o Real Brasileiro como moeda padrão e permite atualização pelo próprio aplicativo.
+Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A prévia 0.1.4 para Android restaura a conexão com a Tripper Dash, mantém o login com Google, o Real Brasileiro como moeda padrão e a atualização pelo próprio aplicativo.
 
 ## Upstream project notice
 
 > [!WARNING]
-> Royal Enfield contacted the OpenDash project, and after discussions the project is removing dash connection/projection protocols, proprietary code, and dash wallpaper functionality from future releases. OpenDash is being refocused as a clean, independent app around route preview, vehicle management, maintenance, garage, expenses, and downloadable wallpapers. Existing dash-related builds may continue to work only while the dash still allows them, but dash connection issues will not be fixed going forward.
+> Royal Enfield contacted the OpenDash project, and the upstream public branch later removed dash connection and projection code. Vinalayan restores the implementation already present in this repository's history as an experimental, rider-controlled feature. Compatibility still depends on the Tripper Dash firmware and must be checked on the motorcycle.
 
 ## Overview
 
-Vinalayan is an open-source Android app for motorcycle ownership, trip prep, and ride-adjacent tools, based on OpenDash. The project is moving forward without dash connection, projection, reverse-engineered protocol, or proprietary integration code.
-
-The new direction is simple: keep the useful rider tools, make the app clean and independent, and rebuild only around original app-only features.
+Vinalayan is an open-source Android app for motorcycle ownership, trip preparation, route preview, and Tripper Dash projection, based on OpenDash.
 
 ## Current Focus
 
@@ -24,36 +22,30 @@ The new direction is simple: keep the useful rider tools, make the app clean and
 - Downloadable wallpaper pack in Settings.
 - Material 3 UI themes.
 - Local-first storage, with optional bring-your-own Firebase/Google sync where configured.
-
-## Removed Direction
-
-Future Vinalayan releases are not intended to include:
-
-- Dash pairing or connection flows.
-- Dash projection, video streaming, media/call cards, or hardware control.
-- Reverse-engineered dash protocol/session/auth code.
-- Dash wallpaper upload or playback features.
-- Bug fixes for dash connection behavior in older builds.
+- Home connection menu with live Tripper status.
+- Wi-Fi discovery and pairing for Tripper networks beginning with `RE_`.
+- Dash authentication, route projection, joystick controls, media/call cards, and wallpaper playback.
 
 ## Install
 
-Baixe **Vinalayan-0.1.3-preview-universal.apk** na [página da prévia](https://github.com/eng-vmourao/Vinalayan/releases/tag/v0.1.3-preview), abra o arquivo no Android e permita a instalação quando solicitado. Nas próximas versões, use **More → Update from GitHub → Check** para baixar e validar a atualização pelo aplicativo. Requer Android 7.0 ou posterior.
+Baixe **Vinalayan-0.1.4-preview-universal.apk** na [página de versões](https://github.com/eng-vmourao/Vinalayan/releases), abra o arquivo no Android e permita a instalação quando solicitado. Nas próximas versões, use **More → Update from GitHub → Check** para baixar e validar a atualização pelo aplicativo. Requer Android 7.0 ou posterior.
 
-A prévia passou em 18 testes unitários, Android Lint sem erros, verificações de assinatura e instalação/abertura das quatro abas em emulador Android 15. Ainda precisa ser validada no seu celular. Veja o [guia completo de instalação e atualização](docs/APK.md).
+A prévia é validada com testes unitários, Android Lint, verificações de assinatura e instalação/abertura do menu de conexão e das cinco abas em emulador Android 15. A conexão e a projeção precisam ser validadas com uma Tripper Dash real. Veja o [guia completo de instalação e atualização](docs/APK.md).
 
 ## First Use
 
 1. Open Vinalayan.
-2. Add your motorcycle in **Vehicles**.
-3. Add odometer, PUC, insurance, and service details.
-4. Log fuel, maintenance, and ownership costs in **Garage** and **Expenses**.
-5. Share a destination or `geo:` link into Vinalayan to preview a route.
-6. Use **More** for account, sync, appearance, map provider, and wallpaper downloads.
+2. On **Home**, tap **Connect to dash** while the motorcycle and Tripper Dash are on.
+3. Accept the Android Wi-Fi and nearby-device permissions, then select the `RE_*` network shown by the bike.
+4. Add your motorcycle in **Vehicles** and use **Garage** and **Expenses** for its records.
+5. Share a destination or `geo:` link into Vinalayan, then choose **Send to Tripper Dash**.
+6. Use **More** for account, sync, appearance, map provider, and updates.
 
 ## Main Tabs
 
 | Tab | What it does |
 | --- | --- |
+| Home | Tripper status, connection menu, navigation, saved destinations, and rides |
 | Vehicles | Add/edit vehicles and choose the active vehicle |
 | Expenses | Add, filter, review, and export expenses |
 | Garage | Odometer, mileage, spare parts, and service logging |
@@ -95,11 +87,11 @@ The [APK guide](docs/APK.md) explains GitHub Actions builds, installation, signi
 - Expense exports are created locally and shared only when you choose to share them.
 - Firebase/Google sync is optional and bring-your-own-project.
 - Release builds should avoid logging full URLs, coordinates, account IDs, or device identifiers.
-- The app should not collect dash credentials or connect to motorcycle dash hardware going forward.
+- Tripper Wi-Fi credentials are stored locally with Android encrypted preferences when available.
 
 ## Contributing
 
-Issues and pull requests are welcome for the app-only direction: route preview, vehicles, garage, maintenance, expenses, sync, themes, and downloadable wallpapers.
+Issues and pull requests are welcome for routes, Tripper compatibility, vehicles, garage, maintenance, expenses, sync, themes, and wallpapers.
 
 Please remove personal data from logs and screenshots before sharing: coordinates, SSIDs, account IDs, tokens, and device identifiers.
 

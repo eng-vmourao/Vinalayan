@@ -95,7 +95,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = providers.gradleProperty("VINALAYAN_VERSION_CODE").orNull?.toInt() ?: 1
-        versionName = "0.1.3-preview"
+        versionName = "0.1.4-preview"
 
         buildConfigField(
             "String",

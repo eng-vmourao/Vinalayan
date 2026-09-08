@@ -75,8 +75,12 @@ def main():
             raise AssertionError(result)
         capture("01-login", "Continuar com Google")
         tap("Continuar sem entrar")
-        capture("02-vehicles", "My Vehicles")
+        capture("02-home", "Connect to dash")
+        tap("Connect to dash")
+        capture("03-dash", "Connect to Tripper Dash")
+        tap("Home")
         for tab, marker in [
+            ("Vehicles", "My Vehicles"),
             ("Expenses", "My Expenses"),
             ("Garage", "Active vehicle"),
             ("More", "Update from GitHub"),
@@ -86,7 +90,7 @@ def main():
         crash_log = adb("logcat", "-b", "crash", "-d")
         if PACKAGE in crash_log:
             raise AssertionError("Android recorded a Vinalayan crash")
-        print("PASS: signed APK installed and all four main tabs opened", flush=True)
+        print("PASS: signed APK installed; connection screen and all five main tabs opened", flush=True)
     finally:
         screenshot = subprocess.run(
             ["adb", "exec-out", "screencap", "-p"], capture_output=True, timeout=30,

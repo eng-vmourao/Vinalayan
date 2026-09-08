@@ -35,6 +35,7 @@ import com.example.opendash.viewmodel.RouteViewModel
 @Composable
 fun RouteScreen(
     onBack: () -> Unit,
+    onSentToDash: (String) -> Unit = {},
     routeViewModel: RouteViewModel = viewModel(),
 ) {
     val routeState by routeViewModel.state.collectAsState()
@@ -190,6 +191,15 @@ fun RouteScreen(
         )
 
         if (hasDestination) {
+            Spacer(Modifier.height(10.dp))
+            OpenDashBtn(
+                label = "Send to Tripper Dash",
+                onClick = { onSentToDash(destinationName) },
+                icon = OpenDashIcons.Dash,
+                variant = BtnVariant.Primary,
+                size = BtnSize.Md,
+                modifier = Modifier.fillMaxWidth(),
+            )
             Spacer(Modifier.height(10.dp))
             OpenDashBtn(
                 label = "Save this destination",

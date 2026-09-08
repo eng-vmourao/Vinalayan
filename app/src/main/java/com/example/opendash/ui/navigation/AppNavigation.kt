@@ -33,7 +33,9 @@ import com.example.opendash.ui.screens.*
 import com.example.opendash.ui.theme.GeistFamily
 import com.example.opendash.viewmodel.AppViewModel
 import com.example.opendash.viewmodel.AuthViewModel
+import com.example.opendash.viewmodel.ConnStage
 import com.example.opendash.viewmodel.ConnectionState
+import com.example.opendash.viewmodel.DashViewModel
 import com.example.opendash.viewmodel.RouteViewModel
 
 sealed class Screen(val route: String) {
@@ -42,6 +44,7 @@ sealed class Screen(val route: String) {
     object Vehicles : Screen("vehicles")
     object Expenses : Screen("expenses")
     object Route : Screen("route")
+    object Dash : Screen("dash")
     object Garage : Screen("garage")
     object Rides : Screen("rides")
     object Settings : Screen("settings")
@@ -50,9 +53,10 @@ sealed class Screen(val route: String) {
 
 private data class NavTab(val screen: Screen, val icon: ImageVector, val label: String)
 
-private val startScreen = Screen.Vehicles
+private val startScreen = Screen.Home
 
 private val bottomTabs = listOf(
+    NavTab(Screen.Home, OpenDashIcons.Home, "Home"),
     NavTab(Screen.Vehicles, OpenDashIcons.Motor, "Vehicles"),
     NavTab(Screen.Expenses, OpenDashIcons.Chart, "Expenses"),
     NavTab(Screen.Garage, OpenDashIcons.Wrench, "Garage"),
@@ -60,13 +64,14 @@ private val bottomTabs = listOf(
 )
 
 private val bottomRoutes = bottomTabs.map { it.screen.route }
-private val hiddenShellRoutes = listOf(Screen.Home.route, Screen.Route.route, Screen.Rides.route)
+private val hiddenShellRoutes = listOf(Screen.Route.route, Screen.Dash.route, Screen.Rides.route)
 private val shellRoutes = bottomRoutes + hiddenShellRoutes
 
 @Composable
 fun AppNavigation(
     authViewModel: AuthViewModel = viewModel(),
     appViewModel: AppViewModel = viewModel(),
+    dashViewModel: DashViewModel = viewModel(),
     routeViewModel: RouteViewModel = viewModel(),
 ) {
     val navController = rememberNavController()
@@ -75,7 +80,19 @@ fun AppNavigation(
     val showBottomNav = currentRoute in shellRoutes
     val canSwipeBottomTabs = currentRoute in bottomRoutes
     val routeState by routeViewModel.state.collectAsState()
-    val conn = ConnectionState.Offline
+    val dashUi by dashViewModel.ui.collectAsState()
+    val conn = when (dashUi.stage) {
+        ConnStage.STREAMING -> ConnectionState.Connected
+        ConnStage.WIFI, ConnStage.AUTH -> ConnectionState.Searching
+        else -> ConnectionState.Offline
+    }
+
+    LaunchedEffect(routeState.destination?.lat, routeState.destination?.lng) {
+        val destination = routeState.destination
+        if (destination?.lat != null && destination.lng != null) {
+            dashViewModel.prefetchTiles(destination.lat, destination.lng)
+        }
+    }
 
     LaunchedEffect(routeState.pendingNavigate, currentRoute) {
         if (routeState.pendingNavigate && currentRoute != null && currentRoute != Screen.Login.route) {
@@ -165,13 +182,37 @@ fun AppNavigation(
                     )
                 }
                 composable(Screen.Home.route) {
-                    HomeScreen(conn = conn, onNavigate = {}, routeViewModel = routeViewModel)
+                    HomeScreen(
+                        conn = conn,
+                        onNavigate = { destination ->
+                            when (destination) {
+                                "route" -> navController.navigate(Screen.Route.route)
+                                "dash" -> navController.navigate(Screen.Dash.route)
+                                "rides" -> navController.navigate(Screen.Rides.route)
+                                "garage" -> navController.navigate(Screen.Garage.route)
+                                "settings" -> navController.navigate(Screen.Settings.route)
+                            }
+                        },
+                        routeViewModel = routeViewModel,
+                    )
                 }
                 composable(Screen.Vehicles.route) { VehiclesScreen() }
                 composable(Screen.Expenses.route) { ExpensesScreen() }
                 composable(Screen.Route.route) {
-                    RouteScreen(routeViewModel = routeViewModel, onBack = { navigateHome() })
+                    RouteScreen(
+                        routeViewModel = routeViewModel,
+                        onBack = { navigateHome() },
+                        onSentToDash = { destinationName ->
+                            dashViewModel.setDestination(
+                                name = destinationName,
+                                lat = routeState.destination?.lat,
+                                lng = routeState.destination?.lng,
+                            )
+                            navController.navigate(Screen.Dash.route) { launchSingleTop = true }
+                        },
+                    )
                 }
+                composable(Screen.Dash.route) { DashScreen(vm = dashViewModel) }
                 composable(Screen.Garage.route) { GarageScreen() }
                 composable(Screen.Rides.route) { RidesScreen() }
                 composable(Screen.MapboxDebug.route) {
@@ -220,6 +261,7 @@ private fun transitionDirection(fromRoute: String?, toRoute: String?): Int =
 private fun navOrderIndex(route: String?): Int = when (route) {
     Screen.Home.route -> 0
     Screen.Route.route -> 0
+    Screen.Dash.route -> 0
     Screen.Rides.route -> 0
     Screen.Vehicles.route -> 0
     Screen.Expenses.route -> 10
