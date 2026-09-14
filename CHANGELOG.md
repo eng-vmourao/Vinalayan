@@ -1,5 +1,12 @@
 # Changelog
 
+## Vinalayan 0.1.5 Preview
+
+- Adicionado suporte completo a compartilhamento de links e rotas do Waze (links web, `wz.to` e esquema `waze://`).
+- Orientação por voz ativada por padrão no modo FULL (instruções completas por sintetizador TTS com pré-aquecimento na inicialização).
+- Adicionada indicação de velocidade do piloto e velocidade permitida da pista (limite da via) com destaque visual de alerta para excesso.
+- Adicionado cronômetro de espera em semáforos e cruzamentos (`🚦 Parado: 35s`) no celular e na tela do Tripper Dash (`STOP 35s`).
+
 ## Vinalayan 0.1.4 Preview
 
 - Restored the Home tab with live Tripper Dash connection status.

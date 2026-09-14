@@ -2,7 +2,7 @@
 
 Aplicativo Android pessoal de Vinícius para sua Himalayan, baseado no [OpenDash](https://github.com/subtlesayak/open-dash). Reúne veículos, manutenção, abastecimentos, despesas e visualização de rotas.
 
-Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A prévia 0.1.4 para Android restaura a conexão com a Tripper Dash, mantém o login com Google, o Real Brasileiro como moeda padrão e a atualização pelo próprio aplicativo.
+Esta versão adota o nome Vinalayan. O histórico, a licença e os créditos do projeto original estão preservados. A prévia 0.1.5 para Android traz suporte a rotas do Waze, velocidade permitida da via, cronômetro de semáforo, voz FULL por padrão e conexão com a Tripper Dash.
 
 ## Upstream project notice
 
@@ -28,7 +28,7 @@ Vinalayan is an open-source Android app for motorcycle ownership, trip preparati
 
 ## Install
 
-Baixe **Vinalayan-0.1.4-preview-universal.apk** na [página de versões](https://github.com/eng-vmourao/Vinalayan/releases), abra o arquivo no Android e permita a instalação quando solicitado. Nas próximas versões, use **More → Update from GitHub → Check** para baixar e validar a atualização pelo aplicativo. O app requer Android 7.0 ou posterior; a conexão com a Tripper requer Android 10 ou posterior.
+Baixe **Vinalayan-0.1.5-preview-universal.apk** na [página de versões](https://github.com/eng-vmourao/Vinalayan/releases), abra o arquivo no Android e permita a instalação quando solicitado. Nas próximas versões, use **More → Update from GitHub → Check** para baixar e validar a atualização pelo aplicativo. O app requer Android 7.0 ou posterior; a conexão com a Tripper requer Android 10 ou posterior.
 
 A prévia é validada com testes unitários, Android Lint, verificações de assinatura e instalação/abertura do menu de conexão e das cinco abas em emulador Android 15. A conexão e a projeção precisam ser validadas com uma Tripper Dash real. Veja o [guia completo de instalação e atualização](docs/APK.md).
 
