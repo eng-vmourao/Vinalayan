@@ -57,4 +57,44 @@ class LocationParserTest {
         assertEquals("Shared location", location.name)
         assertTrue(location.needsExpansion)
     }
+
+    @Test
+    fun parse_acceptsWazeUrlWithCoordinates() {
+        val location = LocationParser.parse("Confira este local no Waze: https://waze.com/ul?ll=-23.55052,-46.633308&navigate=yes")
+
+        assertEquals("https://waze.com/ul?ll=-23.55052,-46.633308&navigate=yes", location.url)
+        assertEquals(-23.55052, location.lat!!, 0.000001)
+        assertEquals(-46.633308, location.lng!!, 0.000001)
+        assertFalse(location.needsExpansion)
+    }
+
+    @Test
+    fun parse_acceptsWazeUrlWithEncodedComma() {
+        val location = LocationParser.parse("https://www.waze.com/ul?ll=-23.55052%2C-46.633308&navigate=yes")
+
+        assertEquals("https://www.waze.com/ul?ll=-23.55052%2C-46.633308&navigate=yes", location.url)
+        assertEquals(-23.55052, location.lat!!, 0.000001)
+        assertEquals(-46.633308, location.lng!!, 0.000001)
+        assertFalse(location.needsExpansion)
+    }
+
+    @Test
+    fun parse_acceptsWazeCustomScheme() {
+        val location = LocationParser.parse("waze://?ll=-23.55052,-46.633308&navigate=yes")
+
+        assertEquals("waze://?ll=-23.55052,-46.633308&navigate=yes", location.url)
+        assertEquals(-23.55052, location.lat!!, 0.000001)
+        assertEquals(-46.633308, location.lng!!, 0.000001)
+        assertFalse(location.needsExpansion)
+    }
+
+    @Test
+    fun parse_acceptsWazeShortLinkForExpansion() {
+        val location = LocationParser.parse("https://wz.to/xyz789")
+
+        assertEquals("https://wz.to/xyz789", location.url)
+        assertNull(location.lat)
+        assertNull(location.lng)
+        assertTrue(location.needsExpansion)
+    }
 }

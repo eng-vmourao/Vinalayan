@@ -63,6 +63,10 @@ data class DashUiState(
     val headingUp: Boolean = true,
     val followMode: Boolean = true,
     val thermal: String = "OK",
+    // Speed info
+    val currentSpeedKmh: Int? = null,       // rider's GPS speed
+    val speedLimitKmh: Int? = null,         // posted road speed limit
+    val stoppedSec: Int? = null,            // elapsed seconds stationary at signal/traffic
     // For the in-app Google Map view
     val riderLat: Double? = null,
     val riderLng: Double? = null,
@@ -147,6 +151,7 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
     private var smoothEtaSec = 0.0
     @Volatile private var etaArrivalMs = 0L
     private var lastArrivalCalcMs = 0L
+    private var stopStartedMs = 0L
 
     // Off-route → reroute, debounced. Now feasible because the app keeps cellular
     // internet while bound to the dash (per-socket binding), so Router can run mid-ride.
@@ -590,6 +595,7 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
         offRouteSince = 0L
         panX = 0f; panY = 0f; followMode = true
         smoothEtaSec = 0.0; etaArrivalMs = 0L
+        stopStartedMs = 0L
         voice.resetTrip()
         lastSignature = ""   // force a redraw with no route line
         _ui.value = _ui.value.copy(
@@ -602,6 +608,7 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
             maneuver = null,
             offRoute = false,
             followMode = true,
+            stoppedSec = null,
         )
         session.updateRouteCard("OpenDash")   // dash card → name + 0.0 km, nav off
     }
@@ -738,10 +745,12 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
         // Keep the last heading on GPS dropout (tunnels) — don't snap the map to north.
         var heading = loc?.bearing ?: (if (camInit) camHdg else 0f)
         var offRoute = false
+        var navSpeedLimit: Int? = null
 
         if (r != null && loc != null) {
             val ns = trackProgress(r, GeoPoint(loc.latitude, loc.longitude))
             remainingM = ns.remainingM
+            navSpeedLimit = ns.speedLimitKmh
             val headingKnown = loc.hasBearing() && loc.speed >= 1.5f
             val headingOff = headingKnown && angleDelta(loc.bearing, ns.heading) > 50f
             offRoute = when {
@@ -797,6 +806,32 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
         }
 
         // Publish nav figures to the phone UI.
+        val currentSpeedKmh = loc?.speed?.let { if (it > 0.5f) (it * 3.6).toInt() else null }
+
+        val isMoving = loc != null && loc.speed >= 1.5f
+        val isStationary = loc != null && (loc.speed < 0.8f || !loc.hasSpeed())
+        val nowMs = System.currentTimeMillis()
+
+        val stoppedSec: Int? = when {
+            isMoving -> {
+                stopStartedMs = 0L
+                null
+            }
+            isStationary -> {
+                if (stopStartedMs == 0L) {
+                    stopStartedMs = nowMs
+                }
+                val elapsed = ((nowMs - stopStartedMs) / 1000).toInt()
+                if (elapsed >= 2) elapsed else null
+            }
+            else -> {
+                if (stopStartedMs > 0L) {
+                    val elapsed = ((nowMs - stopStartedMs) / 1000).toInt()
+                    if (elapsed >= 2) elapsed else null
+                } else null
+            }
+        }
+
         _ui.value = _ui.value.copy(
             hasGps = loc != null,
             gpsStatus = gpsStatus,
@@ -807,6 +842,9 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
             etaMinutes = etaSec?.let { (it / 60.0).toInt() },
             maneuver = null,
             offRoute = offRoute,
+            currentSpeedKmh = currentSpeedKmh,
+            speedLimitKmh = navSpeedLimit,
+            stoppedSec = stoppedSec,
         )
 
         updateThermal()
@@ -949,10 +987,17 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
             mins >= 60 -> "${mins / 60}h ${mins % 60}m"
             else       -> "$mins min"
         } else null
-        // 12-hour arrival clock; hidden once arriving.
-        val etaSecondary = if (etaPrimary != null && !arriving)
-            java.text.SimpleDateFormat("h:mm a", java.util.Locale.getDefault()).format(java.util.Date(etaArrivalMs))
-        else null
+        // 12-hour arrival clock; shows stop timer when stationary.
+        val etaSecondary = if (etaPrimary != null && !arriving) {
+            val clock = java.text.SimpleDateFormat("h:mm a", java.util.Locale.getDefault()).format(java.util.Date(etaArrivalMs))
+            val stopped = _ui.value.stoppedSec
+            if (stopped != null && stopped >= 3) {
+                val stopStr = if (stopped < 60) "${stopped}s" else "%d:%02d".format(stopped / 60, stopped % 60)
+                "STOP $stopStr · $clock"
+            } else {
+                clock
+            }
+        } else null
         val frame = MapRenderer.Frame(
             centerLat = centerLat,
             centerLng = centerLng,
@@ -1035,6 +1080,7 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
         val remainingM: Double, val nextTurnM: Double, val heading: Float, val offRoute: Boolean,
         val snapped: GeoPoint, val snapDist: Double,
         val nextManeuver: com.example.opendash.dash.nav.Maneuver?,
+        val speedLimitKmh: Int? = null,
     )
 
     private data class Match(val cum: Double, val dist: Double, val bearing: Float, val proj: GeoPoint)
@@ -1071,7 +1117,8 @@ class DashViewModel(app: Application) : AndroidViewModel(app) {
             it.cumulativeMeters > progressM + 1.0 && it.type != com.example.opendash.dash.nav.ManeuverType.DEPART
         }
         val nextTurn = nextMan?.let { (it.cumulativeMeters - progressM).coerceAtLeast(0.0) } ?: remaining
-        return NavState(remaining, nextTurn, m.bearing, m.dist > 70.0, m.proj, m.dist, nextMan)
+        val speedLimit = r.speedLimitAtKmh(progressM)
+        return NavState(remaining, nextTurn, m.bearing, m.dist > 70.0, m.proj, m.dist, nextMan, speedLimit)
     }
 
     private fun updateThermal() {

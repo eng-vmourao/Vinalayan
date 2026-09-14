@@ -312,33 +312,70 @@ fun DashScreen(vm: DashViewModel = viewModel()) {
             Spacer(Modifier.height(10.dp))
         }
 
-        // Live info strip — real remaining distance, ETA, zoom
+
+        // Live info strip — speed, remaining distance, ETA, speed limit
+        val speeding = ui.currentSpeedKmh != null && ui.speedLimitKmh != null &&
+            ui.currentSpeedKmh!! > ui.speedLimitKmh!!
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            listOf(
-                Triple(
+            // Build the cells dynamically: speed + remaining + ETA + speed limit (or zoom fallback)
+            val cells = buildList {
+                // Stop timer (when stopped at signal/traffic >= 2s) or current speed
+                val stopped = ui.stoppedSec
+                if (stopped != null && stopped >= 2) {
+                    val formatted = if (stopped < 60) "${stopped}s" else "%d:%02d".format(stopped / 60, stopped % 60)
+                    add(InfoCell(
+                        formatted, "", "🚦 Parado",
+                        bg = Color(0x26E85D4A),
+                        border = Color(0xFFE85D4A),
+                        valueColor = Color(0xFFE85D4A),
+                    ))
+                } else {
+                    val speedVal = ui.currentSpeedKmh?.toString() ?: "0"
+                    add(InfoCell(
+                        speedVal, "km/h", "Speed",
+                        valueColor = if (speeding) Color(0xFFE85D4A) else TextHi,
+                    ))
+                }
+                // Remaining distance
+                add(InfoCell(
                     ui.remainingKm?.let { if (it >= 10) "%.0f".format(it) else "%.1f".format(it) } ?: "—",
                     if (ui.remainingKm != null) "km" else "", "Remaining",
-                ),
-                Triple(ui.etaMinutes?.toString() ?: "—", if (ui.etaMinutes != null) "min" else "", "ETA"),
-                Triple("z${ui.mapZoom}", "", "Zoom"),
-            ).forEach { (v, u, k) ->
+                ))
+                // ETA
+                add(InfoCell(
+                    ui.etaMinutes?.toString() ?: "—",
+                    if (ui.etaMinutes != null) "min" else "", "ETA",
+                ))
+                // Speed limit (when available) or Zoom
+                if (ui.speedLimitKmh != null) {
+                    add(InfoCell(
+                        ui.speedLimitKmh.toString(), "km/h", "Limit",
+                        bg = if (speeding) Color(0x33E85D4A) else Surf1,
+                        border = if (speeding) Color(0xFFE85D4A) else Line,
+                        valueColor = if (speeding) Color(0xFFE85D4A) else TextHi,
+                    ))
+                } else {
+                    add(InfoCell("z${ui.mapZoom}", "", "Zoom"))
+                }
+            }
+            cells.forEach { cell ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(13.dp))
-                        .background(Surf1)
-                        .border(1.dp, Line, RoundedCornerShape(13.dp))
+                        .background(cell.bg)
+                        .border(1.dp, cell.border, RoundedCornerShape(13.dp))
                         .padding(11.dp),
                 ) {
                     Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.Center) {
-                        Text(v, color = TextHi, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, fontFamily = GeistMonoFamily)
-                        if (u.isNotEmpty()) {
+                        Text(cell.value, color = cell.valueColor, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, fontFamily = GeistMonoFamily)
+                        if (cell.unit.isNotEmpty()) {
                             Spacer(Modifier.width(3.dp))
-                            Text(u, color = TextLo, fontSize = 10.5.sp, fontFamily = GeistMonoFamily, modifier = Modifier.padding(bottom = 2.dp))
+                            Text(cell.unit, color = TextLo, fontSize = 10.5.sp, fontFamily = GeistMonoFamily, modifier = Modifier.padding(bottom = 2.dp))
                         }
                     }
-                    Eyebrow(k, Modifier.padding(top = 3.dp))
+                    Eyebrow(cell.label, Modifier.padding(top = 3.dp))
                 }
             }
         }
@@ -454,3 +491,12 @@ fun DashScreen(vm: DashViewModel = viewModel()) {
         }
     }
 }
+
+private data class InfoCell(
+    val value: String,
+    val unit: String,
+    val label: String,
+    val bg: Color = Surf1,
+    val border: Color = Line,
+    val valueColor: Color = TextHi,
+)

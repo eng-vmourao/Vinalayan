@@ -27,10 +27,20 @@ class VoiceManager private constructor(context: Context) {
     private val prefs = app.getSharedPreferences("voice", Context.MODE_PRIVATE)
 
     private val _mode = MutableStateFlow(
-        runCatching { VoiceMode.valueOf(prefs.getString(KEY_MODE, VoiceMode.CHIME.name)!!) }
-            .getOrDefault(VoiceMode.CHIME)
+        runCatching { VoiceMode.valueOf(prefs.getString(KEY_MODE, VoiceMode.FULL.name)!!) }
+            .getOrDefault(VoiceMode.FULL)
     )
     val mode = _mode.asStateFlow()
+
+    // ── TTS engine (lazy; created only when FULL is actually used) ──────────────
+    @Volatile private var tts: TextToSpeech? = null
+    @Volatile private var ttsReady = false
+    private var tone: ToneGenerator? = null
+
+    init {
+        // Warm up TTS eagerly when mode is FULL so the first announcement isn't silent.
+        if (_mode.value == VoiceMode.FULL) ensureTts()
+    }
 
     fun setMode(m: VoiceMode) {
         prefs.edit().putString(KEY_MODE, m.name).apply()
@@ -38,11 +48,6 @@ class VoiceManager private constructor(context: Context) {
         if (m == VoiceMode.OFF) tts?.stop()
         else if (m == VoiceMode.FULL) ensureTts()  // warm up so the first turn isn't silent
     }
-
-    // ── TTS engine (lazy; created only when FULL is actually used) ──────────────
-    @Volatile private var tts: TextToSpeech? = null
-    @Volatile private var ttsReady = false
-    private var tone: ToneGenerator? = null
 
     private fun ensureTts() {
         if (tts != null) return

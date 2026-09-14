@@ -16,6 +16,8 @@ object NavEngine {
         val etaSeconds: Double,
         val offRoute: Boolean,
         val arrived: Boolean,
+        /** Posted speed limit (km/h) for the current road segment, or null if unknown. */
+        val speedLimitKmh: Int? = null,
     )
 
     private const val OFF_ROUTE_M = 60.0
@@ -59,6 +61,9 @@ object NavEngine {
         val speed = if (speedMps > 0.5f) speedMps.toDouble() else DEFAULT_SPEED_MPS
         val eta = remaining / speed
 
+        // Look up the posted speed limit at the rider's current position on the route.
+        val speedLimit = route.speedLimitAtKmh(bestCum)
+
         return Progress(
             snapped = bestSnap,
             routeBearing = bestBearing,
@@ -68,6 +73,7 @@ object NavEngine {
             etaSeconds = eta,
             offRoute = offRoute,
             arrived = arrived,
+            speedLimitKmh = speedLimit,
         )
     }
 }

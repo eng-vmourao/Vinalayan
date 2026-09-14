@@ -13,15 +13,18 @@ object LocationParser {
     private const val MAX_BODY_BYTES = 256 * 1024
     private const val UA = "Mozilla/5.0 (Linux; Android 14; Nothing Phone 3) AppleWebKit/537.36 " +
         "(KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36"
-    private val urlRegex  = Regex("https?://[^\\s)]+")
+    private val urlRegex  = Regex("(?:https?|waze)://[^\\s)]+", RegexOption.IGNORE_CASE)
     private val coord3d4d = Regex("!3d(-?\\d+\\.\\d+)!4d(-?\\d+\\.\\d+)")
     private val coordAt   = Regex("@(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)")
-    private val coordQ    = Regex("[?&](?:q|query|destination|daddr)=(-?\\d+\\.\\d+),\\s*(-?\\d+\\.\\d+)")
-    private val coordLl   = Regex("[?&]ll=(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)")
+    private val coordQ    = Regex("[?&](?:q|query|destination|daddr)=(-?\\d+\\.\\d+)(?:%2C|,)\\s*(-?\\d+\\.\\d+)")
+    private val coordLl   = Regex("[?&]ll=(-?\\d+\\.\\d+)(?:%2C|,|\\+)\\s*(-?\\d+\\.\\d+)")
     private val coordGeo  = Regex("geo:(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)")
     private val coordSearch = Regex("/search/(-?\\d+\\.\\d+),\\+?(-?\\d+\\.\\d+)")
+    // Waze uses /ul?ll=LAT,LNG&navigate=yes, navigate_lat_lng=LAT%2CLNG, or lat=LAT&lng=LNG
+    private val coordNavigate = Regex("[?&]navigate_lat_lng=(-?\\d+\\.\\d+)(?:%2C|,)(-?\\d+\\.\\d+)")
+    private val coordLatLng = Regex("[?&](?:lat|to_lat)=(-?\\d+\\.\\d+)[^&]*[?&](?:lng|lon|to_lng|to_lon)=(-?\\d+\\.\\d+)")
     private val placePath = Regex("/place/([^/@?]+)")
-    private val placeQ    = Regex("[?&]q=([^&0-9\\-@][^&]*)")
+    private val placeQ    = Regex("[?&](?:q|venue|title|name)=([^&0-9\\-@][^&]*)")
 
     // Body-scan patterns used for non-Google map pages that expose coordinates.
     private val bodyPatterns = listOf(
@@ -39,13 +42,13 @@ object LocationParser {
         // Strip trailing sentence punctuation that often clings to a shared link
         // ("...goo.gl/abc." / "(...)") so the redirect/resolve doesn't 404.
         val candidateUrl = urlRegex.find(trimmed)?.value?.trimEnd('.', ',', ';', '!', '?', ')', ']', '"', '\'')
-            ?: if (trimmed.startsWith("geo:")) trimmed else null
+            ?: if (trimmed.startsWith("geo:", ignoreCase = true) || trimmed.startsWith("waze:", ignoreCase = true)) trimmed else null
         val url = candidateUrl?.takeIf { isAllowedShareUri(it) }
         val rejectedUrl = candidateUrl != null && url == null
 
         val textBefore = url?.let { trimmed.substringBefore(it).trim() }
         val textName = textBefore?.lines()?.lastOrNull { it.isNotBlank() }
-            ?.removeSuffix(":")?.removePrefix("Check out")?.trim()
+            ?.removeSuffix(":")?.removePrefix("Check out")?.removePrefix("Confira")?.trim()
 
         val coords = when {
             url != null -> extractCoords(url)
@@ -90,7 +93,7 @@ object LocationParser {
     }
 
     fun extractCoords(s: String): Pair<Double, Double>? {
-        for (regex in listOf(coord3d4d, coordGeo, coordSearch, coordAt, coordQ, coordLl)) {
+        for (regex in listOf(coord3d4d, coordGeo, coordSearch, coordAt, coordQ, coordLl, coordNavigate, coordLatLng)) {
             val m = regex.find(s) ?: continue
             val pair = m.groupValues[1].toDoubleOrNull()?.let { lat ->
                 m.groupValues[2].toDoubleOrNull()?.let { lng -> lat to lng }
@@ -168,7 +171,9 @@ object LocationParser {
     }
 
     private fun isAllowedShareUri(value: String): Boolean =
-        value.startsWith("geo:") || isAllowedNetworkUrl(value)
+        value.startsWith("geo:", ignoreCase = true) ||
+            value.startsWith("waze:", ignoreCase = true) ||
+            isAllowedNetworkUrl(value)
 
     private fun isAllowedNetworkUrl(value: String): Boolean {
         val uri = runCatching { URI(value) }.getOrNull() ?: return false
@@ -180,6 +185,9 @@ object LocationParser {
             host == "maps.app.goo.gl" || host == "maps.google.com" -> true
             host == "goo.gl" -> path.startsWith("/maps")
             host == "www.google.com" || host == "google.com" -> path.startsWith("/maps")
+            // Waze: waze.com, ul.waze.com, www.waze.com, wz.to
+            host == "waze.com" || host.endsWith(".waze.com") -> true
+            host == "wz.to" || host.endsWith(".wz.to") -> true
             else -> false
         }
     }

@@ -35,10 +35,21 @@ data class Maneuver(
     val location: GeoPoint,
     /** Cumulative distance (m) from the route start to this maneuver's location. */
     val cumulativeMeters: Double,
+    /** Posted speed limit (km/h) for the road segment starting at this maneuver, or null if unknown. */
+    val speedLimitKmh: Int? = null,
 ) {
     /** Dash maneuver glyph byte. CONTINUE (0x0B) is the only verified value. */
     val dashCode: Int get() = 0x0B // TODO: verify other glyph codes on fw 11.63
 }
+
+/**
+ * Speed limit for one segment of the route geometry. Each entry covers from
+ * [startCumulativeM] to the next entry's start (or route end).
+ */
+data class SpeedLimitSegment(
+    val startCumulativeM: Double,
+    val limitKmh: Int,
+)
 
 /** A computed road route from origin to destination. */
 data class Route(
@@ -48,7 +59,20 @@ data class Route(
     val totalSeconds: Double,
     /** Cumulative distance (m) at each geometry vertex — same length as [geometry]. */
     val cumulative: DoubleArray,
+    /** Ordered speed limits along the route. Empty if the routing source does not provide them. */
+    val speedLimits: List<SpeedLimitSegment> = emptyList(),
 ) {
     val destination: GeoPoint? get() = geometry.lastOrNull()
+
+    /** Look up the posted speed limit at a given cumulative distance along the route. */
+    fun speedLimitAtKmh(cumulativeM: Double): Int? {
+        if (speedLimits.isEmpty()) return null
+        var result: Int? = null
+        for (seg in speedLimits) {
+            if (seg.startCumulativeM > cumulativeM) break
+            result = seg.limitKmh
+        }
+        return result
+    }
 }
 
